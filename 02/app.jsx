@@ -5,8 +5,8 @@ export default class App extends React.Component{
   render (){
     return (
       <div>
-        <h1>簡単なサンプル</h1>
-        <Message />
+        <h1>propsでメッセージを表示する</h1>
+        <Message text="おまえはもう死んでいる"/>
       </div>
     );
   }

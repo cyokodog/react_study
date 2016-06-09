@@ -1,9 +1,6 @@
 {
   "name": "react_study",
   "version": "1.0.0",
-  "description": "",
-  "keywords": [],
-  "author": "",
   "devDependencies": {
     "babel-preset-es2015": "6.9.0",
     "babel-preset-react": "6.5.0",
@@ -13,6 +10,7 @@
     "gulp": "3.9.1",
     "react": "15.1.0",
     "react-dom": "15.1.0",
+    "run-sequence": "1.2.1",
     "vinyl-source-stream": "1.1.0"
   }
 }

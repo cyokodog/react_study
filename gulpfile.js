@@ -3,12 +3,25 @@ const browserify = require('browserify');
 const babelify = require('babelify');
 const source = require('vinyl-source-stream');
 const browserSync = require('browser-sync');
+const runSequence = require('run-sequence');
 
-gulp.task('es:convert', () => {
+const proj = ['01', '02', '03', '04'];
 
+const defineProjTask = (name, task) => {
+  const tasks = [];
   const defineTask = (dir) => {
-    browserify(dir + '/app.jsx', { debug: true })
-      // .babelrcを書かない場合は以下のようにする
+    const taskName = name + ':'+dir;
+    tasks.push(taskName);
+    gulp.task(taskName, task(dir));
+  };
+  proj.forEach(defineTask);
+  gulp.task(name, tasks);
+};
+
+defineProjTask('es:convert', (dir) => {
+  return (cb) => {
+    return browserify(dir + '/main.js', { debug: true })
+    // .babelrcを書かない場合は以下のようにする
       // .transform(babelify,{presets: ["react","es2015"]})
       .transform(babelify)
       .bundle()
@@ -16,19 +29,14 @@ gulp.task('es:convert', () => {
       .pipe(source('bundle.js'))
       .pipe(gulp.dest(dir));
   };
-
-  ['01'].forEach(defineTask);
-
-
-
-
-
-
-
 });
 
-gulp.task('watch', () => {
-  gulp.watch('./*.jsx', ['es:convert'])
+defineProjTask('watch', (dir) => {
+  return (cb) => {
+    gulp.watch([dir + '/**/*.jsx', dir + '/**/main.js'], () => {
+      runSequence('es:convert:' + dir, browserSync.reload);
+    })
+  };
 });
 
 gulp.task(
