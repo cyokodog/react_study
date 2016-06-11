@@ -2,10 +2,11 @@ const gulp = require('gulp');
 const browserify = require('browserify');
 const babelify = require('babelify');
 const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
 const browserSync = require('browser-sync');
 const runSequence = require('run-sequence');
 
-const proj = ['01', '02', '03', '04'];
+const proj = ['01', '02', '03', '04', '05', '06', '07'];
 
 const defineProjTask = (name, task) => {
   const tasks = [];
@@ -27,13 +28,14 @@ defineProjTask('es:convert', (dir) => {
       .bundle()
       .on("error", function (err) { console.log("Error : " + err.message); })
       .pipe(source('bundle.js'))
+      .pipe(buffer())
       .pipe(gulp.dest(dir));
   };
 });
 
 defineProjTask('watch', (dir) => {
   return (cb) => {
-    gulp.watch([dir + '/**/*.jsx', dir + '/**/main.js'], () => {
+    gulp.watch([dir + '/**/*.jsx', dir + '/main.js', dir + '/*/*.js'], () => {
       runSequence('es:convert:' + dir, browserSync.reload);
     })
   };
@@ -49,4 +51,10 @@ gulp.task(
   }
 );
 
-gulp.task('default', ['es:convert', 'watch', 'serve']);
+gulp.task('default', () => {
+  runSequence(
+    'es:convert',
+    'serve',
+    'watch'
+  );
+});
